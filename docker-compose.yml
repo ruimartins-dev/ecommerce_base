@@ -1,0 +1,195 @@
+###############################################################################
+# B2B Ministore - local/production-like container stack.
+#
+# Services:
+#   app        php-fpm application server (artisan + composer available)
+#   nginx      web server, exposes the app on http://localhost
+#   mysql      MySQL 8 database (named volume + healthcheck)
+#   redis      cache / queue / broadcasting backend
+#   queue      dedicated queue worker (redis)
+#   scheduler  dedicated cron-less scheduler (schedule:work)
+#   reverb     websocket server for realtime broadcasting
+#   node       Vite dev server for asset hot-reloading
+#
+# DRY: every PHP-based service reuses the SAME image via the `php-base` anchor.
+###############################################################################
+
+# ---------------------------------------------------------------------------
+# Shared definition reused by all PHP containers (app/queue/scheduler/reverb).
+# ---------------------------------------------------------------------------
+x-php-base: &php-base
+  build:
+    context: .
+    dockerfile: docker/php/Dockerfile
+  image: ecommerce-base-php:8.4
+  restart: unless-stopped
+  working_dir: /var/www/html
+  volumes:
+    - ./:/var/www/html
+  networks:
+    - app-net
+  depends_on:
+    mysql:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  # ---------------------------------------------------------------------------
+  # Application (php-fpm). Builds the shared image and runs the bootstrap
+  # entrypoint. Becomes "healthy" once dependencies are installed.
+  # ---------------------------------------------------------------------------
+  app:
+    <<: *php-base
+    container_name: ecommerce_app
+    # Only this container performs the one-time bootstrap (composer/key/perms).
+    environment:
+      CONTAINER_ROLE: app
+    healthcheck:
+      # Healthy only after the entrypoint finished bootstrapping. Worker
+      # services wait on this so they never start before the app is ready.
+      test: ["CMD-SHELL", "test -f /var/www/html/storage/framework/.bootstrapped"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 120s
+
+  # ---------------------------------------------------------------------------
+  # Nginx web server -> proxies PHP to the app container.
+  # ---------------------------------------------------------------------------
+  nginx:
+    image: nginx:1.27-alpine
+    container_name: ecommerce_nginx
+    restart: unless-stopped
+    ports:
+      - "${APP_HTTP_PORT:-80}:80"
+    volumes:
+      - ./:/var/www/html:ro
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - app-net
+
+  # ---------------------------------------------------------------------------
+  # MySQL 8 database with persistent named volume + healthcheck.
+  # ---------------------------------------------------------------------------
+  mysql:
+    image: mysql:8.0
+    container_name: ecommerce_mysql
+    restart: unless-stopped
+    environment:
+      # Defaults kept in sync with .env.example so `docker compose up` works
+      # even before an .env file exists.
+      MYSQL_DATABASE: ${DB_DATABASE:-ecommerce}
+      MYSQL_USER: ${DB_USERNAME:-ecommerce}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-root}
+    ports:
+      - "${FORWARD_DB_PORT:-3306}:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "root", "-p${DB_ROOT_PASSWORD:-root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - app-net
+
+  # ---------------------------------------------------------------------------
+  # Redis - cache, queue and broadcasting backend.
+  # ---------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: ecommerce_redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "${FORWARD_REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    networks:
+      - app-net
+
+  # ---------------------------------------------------------------------------
+  # Queue worker - processes jobs from the Redis queue.
+  # ---------------------------------------------------------------------------
+  queue:
+    <<: *php-base
+    container_name: ecommerce_queue
+    command: ["php", "artisan", "queue:work", "--sleep=3", "--tries=3", "--max-time=3600"]
+    depends_on:
+      app:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ---------------------------------------------------------------------------
+  # Scheduler - runs the Laravel scheduler in-process (no system cron needed).
+  # ---------------------------------------------------------------------------
+  scheduler:
+    <<: *php-base
+    container_name: ecommerce_scheduler
+    command: ["php", "artisan", "schedule:work"]
+    depends_on:
+      app:
+        condition: service_healthy
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ---------------------------------------------------------------------------
+  # Reverb - websocket server for realtime broadcasting.
+  # ---------------------------------------------------------------------------
+  reverb:
+    <<: *php-base
+    container_name: ecommerce_reverb
+    command: ["php", "artisan", "reverb:start", "--host=0.0.0.0", "--port=8080"]
+    ports:
+      - "${FORWARD_REVERB_PORT:-8080}:8080"
+    depends_on:
+      app:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # ---------------------------------------------------------------------------
+  # Node / Vite - dev server with HMR for Bootstrap + JS assets.
+  # ---------------------------------------------------------------------------
+  node:
+    image: node:22-alpine
+    container_name: ecommerce_node
+    restart: unless-stopped
+    working_dir: /var/www/html
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "${FORWARD_VITE_PORT:-5173}:5173"
+    volumes:
+      - ./:/var/www/html
+    networks:
+      - app-net
+
+###############################################################################
+# Named volumes (persistent data) and the shared private network.
+###############################################################################
+volumes:
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local
+
+networks:
+  app-net:
+    driver: bridge
+

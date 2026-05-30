@@ -1,0 +1,10 @@
+//
+// Application stylesheet entrypoint (Bootstrap 5).
+// Override Bootstrap variables in _variables.scss BEFORE the import below.
+//
+
+@import "variables";
+
+// Bootstrap framework
+@import "bootstrap/scss/bootstrap";
+

@@ -1,0 +1,19 @@
+# Keep build context small and avoid copying host-only artifacts into images.
+.git
+.github
+.idea
+.vscode
+node_modules
+vendor
+storage/logs/*.log
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/views/*
+public/build
+public/hot
+*.md
+docker-compose*.yml
+.env
+.env.*
+!.env.example
+
