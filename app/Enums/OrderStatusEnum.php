@@ -37,5 +37,58 @@ enum OrderStatusEnum: string
     {
         return [self::Completed, self::Cancelled];
     }
+
+    /**
+     * Whether the status is terminal (no further transitions allowed).
+     */
+    public function isTerminal(): bool
+    {
+        return in_array($this, self::terminal(), true);
+    }
+
+    /**
+     * The set of statuses this status is allowed to transition to.
+     *
+     * This is the single source of truth for the order lifecycle, consumed by
+     * both the validation layer and the {@see \App\Services\OrderStatusService}.
+     *
+     * @return array<int, self>
+     */
+    public function allowedTransitions(): array
+    {
+        return match ($this) {
+            self::Pending => [self::Confirmed, self::Cancelled],
+            self::Confirmed => [self::Processing, self::Cancelled],
+            self::Processing => [self::Shipped, self::Cancelled],
+            self::Shipped => [self::Completed],
+            self::Completed, self::Cancelled => [],
+        };
+    }
+
+    /**
+     * Whether a transition from this status to the given status is allowed.
+     */
+    public function canTransitionTo(self $target): bool
+    {
+        return in_array($target, $this->allowedTransitions(), true);
+    }
+
+    /**
+     * Value => label map for building <select> options.
+     *
+     * @return array<string, string>
+     */
+    public static function options(): array
+    {
+        return array_reduce(
+            self::cases(),
+            static function (array $carry, self $status): array {
+                $carry[$status->value] = $status->label();
+
+                return $carry;
+            },
+            [],
+        );
+    }
 }
 

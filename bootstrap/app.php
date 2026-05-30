@@ -14,7 +14,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Role-based route protection. Driven by the RoleEnum so route
+        // definitions read ->middleware('role:admin') without magic strings.
+        $middleware->alias([
+            'role' => \App\Http\Middleware\EnsureUserHasRole::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

@@ -12,3 +12,6 @@ import './echo';
 import * as bootstrap from 'bootstrap';
 window.bootstrap = bootstrap;
 
+// Realtime order-status updates (no-op on pages without the order badge).
+import './order-realtime';
+

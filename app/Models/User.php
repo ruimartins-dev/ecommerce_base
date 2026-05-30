@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\RoleEnum;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -85,5 +86,40 @@ class User extends Authenticatable
     public function scopeActive(Builder $query): void
     {
         $query->where('is_active', true);
+    }
+
+    /**
+     * Determine whether the user is assigned the given role.
+     */
+    public function hasRole(RoleEnum $role): bool
+    {
+        return $this->role?->slug === $role->value;
+    }
+
+    /**
+     * Determine whether the user is an administrator.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->hasRole(RoleEnum::Admin);
+    }
+
+    /**
+     * Determine whether the user is a customer.
+     */
+    public function isCustomer(): bool
+    {
+        return $this->hasRole(RoleEnum::Customer);
+    }
+
+    /**
+     * The route name the user should land on after authentication,
+     * resolved from the user's role. Defaults to the customer area.
+     */
+    public function homeRoute(): string
+    {
+        return $this->isAdmin()
+            ? 'admin.dashboard'
+            : 'customer.dashboard';
     }
 }

@@ -132,5 +132,21 @@ class Product extends Model
     {
         $query->where('stock', '>', 0);
     }
+
+    /**
+     * Scope a query to products that should be visible in the customer
+     * storefront: the product must be active AND belong to at least one active
+     * catalog. This is the single source of truth for frontoffice visibility so
+     * controllers never duplicate the rule.
+     *
+     * @param  Builder<Product>  $query
+     */
+    public function scopeVisible(Builder $query): void
+    {
+        $query->where('is_active', true)
+            ->whereHas('catalogs', function (Builder $catalog): void {
+                $catalog->where('is_active', true);
+            });
+    }
 }
 

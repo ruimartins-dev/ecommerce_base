@@ -46,6 +46,14 @@ class Category extends Model
     }
 
     /**
+     * Bind categories by their slug in customer-facing routes.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'slug';
+    }
+
+    /**
      * The parent category.
      *
      * @return BelongsTo<Category, $this>
@@ -93,6 +101,26 @@ class Category extends Model
     public function scopeRoot(Builder $query): void
     {
         $query->whereNull('parent_id');
+    }
+
+    /**
+     * Collect the IDs of every descendant category (children, grandchildren…).
+     *
+     * Used to prevent hierarchy loops (e.g. setting a category's parent to one
+     * of its own descendants, which would create an A → B → A cycle).
+     *
+     * @return array<int, int>
+     */
+    public function descendantIds(): array
+    {
+        $ids = [];
+
+        foreach ($this->children()->get(['id', 'parent_id']) as $child) {
+            $ids[] = $child->id;
+            $ids = array_merge($ids, $child->descendantIds());
+        }
+
+        return $ids;
     }
 }
 

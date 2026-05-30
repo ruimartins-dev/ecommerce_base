@@ -12,16 +12,25 @@
 
     @stack('head')
 </head>
-<body>
-    {{-- Header / navigation slot (no markup yet - foundation only) --}}
-    @include('partials.header')
+<body class="d-flex flex-column min-vh-100 bg-body-tertiary">
+    {{-- Area-specific navigation is injected by child layouts. --}}
+    @yield('navbar')
 
-    <main class="py-4">
-        @yield('content')
+    <main class="flex-grow-1 py-4">
+        <div class="container">
+            {{-- Global UX: flash messages + validation errors. --}}
+            <x-flash-messages />
+            <x-validation-errors />
+
+            @yield('content')
+        </div>
     </main>
 
-    {{-- Footer slot (no markup yet - foundation only) --}}
-    @include('partials.footer')
+    <footer class="border-top py-3 mt-auto bg-white">
+        <div class="container text-center text-muted small">
+            &copy; {{ now()->year }} {{ config('app.name', 'B2B Ministore') }}
+        </div>
+    </footer>
 
     @stack('scripts')
 </body>
