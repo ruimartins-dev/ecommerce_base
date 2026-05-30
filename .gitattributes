@@ -1,0 +1,17 @@
+* text=auto eol=lf
+
+*.blade.php diff=html
+*.css diff=css
+*.html diff=html
+*.md diff=markdown
+*.php diff=php
+
+# Force LF for shell scripts and docker files (they run inside Linux containers)
+*.sh text eol=lf
+docker/php/entrypoint.sh text eol=lf
+Dockerfile text eol=lf
+*.dockerfile text eol=lf
+
+/.github export-ignore
+CHANGELOG.md export-ignore
+.styleci.yml export-ignore
