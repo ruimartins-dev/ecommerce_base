@@ -28,10 +28,10 @@
             <p class="text-muted mb-3">{{ __('SKU') }}: {{ $product->sku }}</p>
 
             @if ($product->categories->isNotEmpty())
-                <p class="mb-3">
+                <p class="mb-3 d-flex flex-wrap gap-1">
                     @foreach ($product->categories as $category)
                         <a href="{{ route('customer.categories.show', $category) }}"
-                           class="badge text-bg-light text-decoration-none border">{{ $category->name }}</a>
+                           class="badge badge-soft-secondary text-decoration-none">{{ $category->name }}</a>
                     @endforeach
                 </p>
             @endif
@@ -59,16 +59,18 @@
                                max="{{ $product->stock }}" class="form-control" style="width: 6rem;">
                     </div>
                     <div class="col-auto">
-                        <button type="submit" class="btn btn-primary">{{ __('Add to cart') }}</button>
+                        <button type="submit" class="btn btn-primary">
+                            <x-icon name="cart" /> {{ __('Add to cart') }}
+                        </button>
                     </div>
                 </form>
             @endif
         </div>
     </div>
 
-    <div class="card border-0 shadow-sm mt-4">
+    <div class="card mt-4">
         <div class="card-body">
-            <h2 class="h6 text-muted text-uppercase mb-3">{{ __('Description') }}</h2>
+            <h2 class="section-label mb-3">{{ __('Description') }}</h2>
             <p class="mb-0">{{ $product->description }}</p>
         </div>
     </div>

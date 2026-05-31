@@ -17,9 +17,24 @@ export default defineConfig({
         hmr: {
             host: 'localhost',
         },
+        // Polling is required for file-change detection on Windows/Docker bind
+        // mounts, but polling the WHOLE project (vendor, node_modules, storage,
+        // git, ...) pegs the CPU (~70%) and starves the PHP container, making
+        // every page load slow. Restrict polling to the source folders we
+        // actually edit and explicitly ignore the heavy/generated trees.
         watch: {
             usePolling: true,
-            ignored: ['**/storage/framework/views/**'],
+            interval: 300,
+            ignored: [
+                '**/.git/**',
+                '**/vendor/**',
+                '**/node_modules/**',
+                '**/storage/**',
+                '**/bootstrap/cache/**',
+                '**/public/build/**',
+                '**/tests/**',
+                '**/database/**',
+            ],
         },
     },
 });

@@ -25,9 +25,9 @@
 
     <div class="row g-3">
         <div class="col-12 col-lg-8">
-            <div class="card shadow-sm border-0">
+            <div class="card">
                 <div class="card-body">
-                    <h2 class="h6 text-muted text-uppercase mb-3">{{ __('Items') }}</h2>
+                    <h2 class="section-label mb-3">{{ __('Items') }}</h2>
                     <div class="table-responsive">
                         <table class="table align-middle mb-0">
                             <thead class="table-light">
@@ -76,9 +76,16 @@
         </div>
 
         <div class="col-12 col-lg-4">
-            <div class="card shadow-sm border-0">
+            <div class="card mb-3">
                 <div class="card-body">
-                    <h2 class="h6 text-muted text-uppercase mb-3">{{ __('Shipping address') }}</h2>
+                    <h2 class="section-label mb-3">{{ __('Order progress') }}</h2>
+                    <x-order-timeline :status="$order->status" />
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="section-label mb-3">{{ __('Shipping address') }}</h2>
                     @if ($order->address)
                         <address class="small mb-0">
                             <strong>{{ $order->address->recipient_name }}</strong><br>
@@ -98,7 +105,7 @@
 
     <div class="mt-4">
         <a href="{{ route('customer.orders.index') }}" class="btn btn-outline-secondary">
-            {{ __('Back to orders') }}
+            <x-icon name="arrow-left" /> {{ __('Back to orders') }}
         </a>
     </div>
 @endsection

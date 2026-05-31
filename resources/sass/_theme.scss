@@ -1,0 +1,408 @@
+//
+// Custom application layer — built on top of Bootstrap.
+// Loaded AFTER Bootstrap so it can use the compiled CSS variables.
+// Keep this small, organized and token-driven. No one-off chaos.
+//
+
+// ---------------------------------------------------------------------------
+// Base polish
+// ---------------------------------------------------------------------------
+body {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+// Stronger, consistent focus ring for accessibility (keyboard users).
+:focus-visible {
+    outline: 2px solid rgba($primary, 0.55);
+    outline-offset: 2px;
+}
+
+a {
+    text-decoration: none;
+}
+
+// ---------------------------------------------------------------------------
+// Cards — soft, elevated surfaces
+// ---------------------------------------------------------------------------
+.card {
+    box-shadow: $box-shadow-sm;
+    transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+// Interactive cards (product tiles, quick actions) lift slightly on hover.
+.card-hover:hover {
+    box-shadow: $box-shadow;
+    transform: translateY(-2px);
+}
+
+.card-header {
+    border-bottom: 1px solid $border-color;
+    font-weight: 600;
+}
+
+// Section eyebrow used across cards ("ITEMS", "CUSTOMER", …).
+.section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+// ---------------------------------------------------------------------------
+// Buttons & icons
+// ---------------------------------------------------------------------------
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    line-height: 1.2;
+}
+
+.btn-icon {
+    --bs-btn-padding-x: 0.5rem;
+    --bs-btn-padding-y: 0.4rem;
+    line-height: 1;
+}
+
+.icon {
+    width: 1em;
+    height: 1em;
+    vertical-align: -0.125em;
+    flex: 0 0 auto;
+}
+
+.icon-lg { width: 1.5em; height: 1.5em; }
+.icon-xl { width: 2em; height: 2em; }
+
+// ---------------------------------------------------------------------------
+// Soft semantic badges — consistent status system
+// ---------------------------------------------------------------------------
+.badge {
+    line-height: 1.1;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+@each $name, $color in (
+    "primary": $primary,
+    "secondary": $secondary,
+    "success": $success,
+    "info": $info,
+    "warning": $warning,
+    "danger": $danger
+) {
+    .badge-soft-#{$name} {
+        color: darken($color, 8%);
+        background-color: rgba($color, 0.12);
+        border: 1px solid rgba($color, 0.22);
+    }
+}
+
+// Small status dot used inside badges / timelines.
+.status-dot {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50rem;
+    display: inline-block;
+    background: currentColor;
+}
+
+// ---------------------------------------------------------------------------
+// Tables — cleaner, scannable
+// ---------------------------------------------------------------------------
+.table > :not(caption) > * > * {
+    border-bottom-color: $border-color;
+}
+
+.table > thead th {
+    color: #64748b;
+    font-size: 0.78rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    background-color: #fbfbfd;
+}
+
+.table-sticky thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+// ---------------------------------------------------------------------------
+// Forms
+// ---------------------------------------------------------------------------
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.35rem;
+    color: #334155;
+}
+
+.form-control,
+.form-select {
+    box-shadow: none;
+}
+
+// Fieldset grouping inside large forms.
+.form-section + .form-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid $border-color;
+}
+
+// ---------------------------------------------------------------------------
+// App shell — admin sidebar + topbar
+// ---------------------------------------------------------------------------
+.app-shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+.app-sidebar {
+    width: 256px;
+    flex: 0 0 256px;
+    background: #ffffff;
+    border-right: 1px solid $border-color;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-sidebar .sidebar-brand {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0 1.25rem;
+    font-weight: 700;
+    color: $headings-color;
+    border-bottom: 1px solid $border-color;
+}
+
+.app-sidebar .sidebar-brand .brand-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 0.6rem;
+    background: linear-gradient(135deg, $primary, lighten($primary, 12%));
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba($primary, 0.35);
+}
+
+.app-sidebar .sidebar-nav {
+    padding: 0.75rem;
+    overflow-y: auto;
+    flex: 1 1 auto;
+}
+
+.sidebar-heading {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    padding: 0.75rem 0.75rem 0.35rem;
+    margin-top: 0.5rem;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: $border-radius-sm;
+    color: #475569;
+    font-weight: 500;
+    line-height: 1.2;
+    transition: background-color 0.12s ease, color 0.12s ease;
+}
+
+.sidebar-link .icon {
+    color: #94a3b8;
+    transition: color 0.12s ease;
+}
+
+.sidebar-link:hover {
+    background: #f1f3f9;
+    color: $headings-color;
+}
+
+.sidebar-link.active {
+    background: rgba($primary, 0.1);
+    color: $primary;
+    font-weight: 600;
+}
+
+.sidebar-link.active .icon {
+    color: $primary;
+}
+
+.app-main {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-topbar {
+    height: 64px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: saturate(180%) blur(8px);
+    border-bottom: 1px solid $border-color;
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0 1.25rem;
+}
+
+.app-content {
+    flex: 1 1 auto;
+    padding: 1.75rem;
+}
+
+// Desktop: the offcanvas sidebar is just a static column.
+@media (min-width: 992px) {
+    .app-sidebar.offcanvas-lg {
+        transform: none;
+        visibility: visible;
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Storefront topbar (customer)
+// ---------------------------------------------------------------------------
+.storefront-navbar {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: saturate(180%) blur(8px);
+    border-bottom: 1px solid $border-color;
+}
+
+.storefront-navbar .navbar-brand {
+    font-weight: 700;
+    color: $headings-color;
+}
+
+.storefront-navbar .nav-link {
+    font-weight: 500;
+    border-radius: $border-radius-sm;
+    padding: 0.4rem 0.75rem;
+}
+
+.storefront-navbar .nav-link.active {
+    color: $primary;
+    background: rgba($primary, 0.1);
+}
+
+// ---------------------------------------------------------------------------
+// Order status timeline
+// ---------------------------------------------------------------------------
+.timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 1.85rem;
+    padding-bottom: 1.1rem;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    left: 0.42rem;
+    top: 1.15rem;
+    bottom: -0.1rem;
+    width: 2px;
+    background: $border-color;
+}
+
+.timeline-item:last-child::before {
+    display: none;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: 0;
+    top: 0.2rem;
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: 50rem;
+    background: #fff;
+    border: 2px solid $border-color;
+}
+
+.timeline-item.is-done .timeline-marker {
+    background: $primary;
+    border-color: $primary;
+}
+
+.timeline-item.is-current .timeline-marker {
+    border-color: $primary;
+    box-shadow: 0 0 0 4px rgba($primary, 0.18);
+}
+
+.timeline-item.is-cancelled .timeline-marker {
+    background: $danger;
+    border-color: $danger;
+}
+
+.timeline-item.is-done::before {
+    background: $primary;
+}
+
+// ---------------------------------------------------------------------------
+// Empty states
+// ---------------------------------------------------------------------------
+.empty-state {
+    text-align: center;
+    padding: 3rem 1.5rem;
+}
+
+.empty-state .empty-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 1rem;
+    background: rgba($primary, 0.08);
+    color: $primary;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+// ---------------------------------------------------------------------------
+// Misc helpers
+// ---------------------------------------------------------------------------
+.avatar-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50rem;
+    background: rgba($primary, 0.12);
+    color: $primary;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    flex: 0 0 auto;
+}
+
+.object-fit-cover {
+    object-fit: cover;
+}
+

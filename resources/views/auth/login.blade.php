@@ -3,7 +3,10 @@
 @section('title', __('Log in'))
 
 @section('content')
-    <h1 class="h4 mb-4 text-center">{{ __('Sign in') }}</h1>
+    <div class="text-center mb-4">
+        <h1 class="h4 mb-1">{{ __('Welcome back') }}</h1>
+        <p class="text-muted small mb-0">{{ __('Sign in to your account to continue.') }}</p>
+    </div>
 
     <form method="POST" action="{{ route('login') }}" novalidate>
         @csrf
@@ -41,7 +44,9 @@
             @endif
         </div>
 
-        <button type="submit" class="btn btn-primary w-100">{{ __('Sign in') }}</button>
+        <button type="submit" class="btn btn-primary btn-lg w-100">
+            <x-icon name="logout" /> {{ __('Sign in') }}
+        </button>
     </form>
 @endsection
 

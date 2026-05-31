@@ -18,14 +18,14 @@
 
     <div class="row g-3">
         <div class="col-12 col-lg-6">
-            <div class="card h-100 shadow-sm border-0">
+            <div class="card h-100">
                 <div class="card-body">
-                    <h2 class="h6 text-muted text-uppercase mb-3">{{ __('Account details') }}</h2>
+                    <h2 class="section-label mb-3">{{ __('Account details') }}</h2>
                     <dl class="row mb-0 small">
-                        <dt class="col-5">{{ __('Name') }}</dt>
-                        <dd class="col-7">{{ $user->name }}</dd>
+                        <dt class="col-5 text-muted fw-normal">{{ __('Name') }}</dt>
+                        <dd class="col-7 fw-medium">{{ $user->name }}</dd>
 
-                        <dt class="col-5">{{ __('Email') }}</dt>
+                        <dt class="col-5 text-muted fw-normal">{{ __('Email') }}</dt>
                         <dd class="col-7">{{ $user->email }}</dd>
                     </dl>
                 </div>
@@ -33,18 +33,18 @@
         </div>
 
         <div class="col-12 col-lg-6">
-            <div class="card h-100 shadow-sm border-0">
+            <div class="card h-100">
                 <div class="card-body">
-                    <h2 class="h6 text-muted text-uppercase mb-3">{{ __('Company') }}</h2>
+                    <h2 class="section-label mb-3">{{ __('Company') }}</h2>
                     @if ($customer)
                         <dl class="row mb-0 small">
-                            <dt class="col-5">{{ __('Company') }}</dt>
-                            <dd class="col-7">{{ $customer->company_name }}</dd>
+                            <dt class="col-5 text-muted fw-normal">{{ __('Company') }}</dt>
+                            <dd class="col-7 fw-medium">{{ $customer->company_name }}</dd>
 
-                            <dt class="col-5">{{ __('VAT number') }}</dt>
+                            <dt class="col-5 text-muted fw-normal">{{ __('VAT number') }}</dt>
                             <dd class="col-7">{{ $customer->vat_number ?? '—' }}</dd>
 
-                            <dt class="col-5">{{ __('Phone') }}</dt>
+                            <dt class="col-5 text-muted fw-normal">{{ __('Phone') }}</dt>
                             <dd class="col-7">{{ $customer->phone ?? '—' }}</dd>
                         </dl>
                     @else
@@ -57,10 +57,10 @@
         </div>
 
         <div class="col-12">
-            <div class="card shadow-sm border-0">
+            <div class="card">
                 <div class="card-body">
                     <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
-                        <h2 class="h6 text-muted text-uppercase mb-0">{{ __('Recent orders') }}</h2>
+                        <h2 class="section-label mb-0">{{ __('Recent orders') }}</h2>
                         <a href="{{ route('customer.orders.index') }}" class="small text-decoration-none">
                             {{ __('View all') }}
                         </a>

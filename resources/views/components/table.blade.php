@@ -1,13 +1,15 @@
 @props([
     // Column header labels for the table head.
     'headers' => [],
+    // Sticky header keeps column labels visible while scrolling long tables.
+    'sticky' => false,
 ])
 
 {{-- Responsive Bootstrap table shell. The default slot renders the <tbody> rows. --}}
-<div class="card shadow-sm border-0">
+<div class="card">
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-            <thead class="table-light">
+        <table class="table table-hover align-middle mb-0 {{ $sticky ? 'table-sticky' : '' }}">
+            <thead>
                 <tr>
                     @foreach ($headers as $header)
                         <th scope="col">{{ $header }}</th>

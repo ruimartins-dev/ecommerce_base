@@ -1,6 +1,92 @@
 //
-// Custom Bootstrap variable overrides.
-// Define brand colors, spacing, typography, etc. here.
-// (Intentionally empty for the foundation - no design decisions made yet.)
+// Design tokens — Bootstrap variable overrides.
+// These MUST be defined before the Bootstrap import (see app.scss).
+//
+// The goal is a calm, premium, enterprise SaaS feel (Stripe / Linear / HubSpot)
+// built entirely on Bootstrap primitives. No custom framework, just smarter tokens.
 //
 
+// ---------------------------------------------------------------------------
+// Brand & semantic colors
+// ---------------------------------------------------------------------------
+$primary:   #4f46e5; // Indigo — trustworthy, modern, B2B
+$secondary: #64748b; // Slate
+$success:   #16a34a;
+$info:      #0ea5e9;
+$warning:   #d97706;
+$danger:    #dc2626;
+$light:     #f8fafc;
+$dark:      #0f172a;
+
+// Neutral surfaces / text
+$body-bg:    #f6f7fb;
+$body-color: #1e293b;
+
+// ---------------------------------------------------------------------------
+// Typography
+// ---------------------------------------------------------------------------
+$font-family-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji";
+
+$font-size-base:   0.95rem;
+$line-height-base: 1.55;
+
+$headings-font-weight:    600;
+$headings-line-height:    1.25;
+$headings-color:          #0f172a;
+
+$small-font-size: 0.825em;
+
+// ---------------------------------------------------------------------------
+// Shape — radii & shadows
+// ---------------------------------------------------------------------------
+$border-radius:    0.625rem;
+$border-radius-sm: 0.45rem;
+$border-radius-lg: 0.875rem;
+$border-radius-xl: 1.1rem;
+
+$border-color: #e6e8ef;
+
+$box-shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.05);
+$box-shadow:    0 4px 12px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(15, 23, 42, 0.05);
+$box-shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+
+// ---------------------------------------------------------------------------
+// Components
+// ---------------------------------------------------------------------------
+$card-border-width:        1px;
+$card-border-color:        $border-color;
+$card-border-radius:       $border-radius-lg;
+$card-cap-bg:              #ffffff;
+
+$btn-font-weight:          500;
+$btn-border-radius:        $border-radius-sm;
+$btn-border-radius-sm:     $border-radius-sm;
+$btn-focus-width:          0.2rem;
+
+$input-border-color:       #d7dbe7;
+$input-border-radius:      $border-radius-sm;
+
+$table-cell-padding-y:     0.75rem;
+$table-cell-padding-x:     1rem;
+$table-th-font-weight:     600;
+
+$badge-font-weight:        600;
+$badge-padding-y:          0.4em;
+$badge-padding-x:          0.7em;
+$badge-border-radius:      50rem;
+
+$dropdown-border-color:    $border-color;
+$dropdown-border-radius:   $border-radius;
+$dropdown-link-active-bg:  rgba($primary, 0.08);
+$dropdown-link-active-color: $primary;
+
+$nav-link-color:           #475569;
+$nav-link-hover-color:     $primary;
+
+$alert-border-radius:      $border-radius;
+
+$breadcrumb-divider-color: #94a3b8;
+$breadcrumb-font-size:     0.825rem;
+$breadcrumb-margin-bottom: 1rem;

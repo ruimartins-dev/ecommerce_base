@@ -8,3 +8,6 @@
 // Bootstrap framework
 @import "bootstrap/scss/bootstrap";
 
+// Custom application layer (uses Bootstrap variables/utilities).
+@import "theme";
+

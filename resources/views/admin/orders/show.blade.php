@@ -11,15 +11,17 @@
             ['label' => $order->order_number],
         ]">
         <x-slot:actions>
-            <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-secondary">{{ __('Back to orders') }}</a>
+            <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-secondary">
+                <x-icon name="arrow-left" /> {{ __('Back to orders') }}
+            </a>
         </x-slot:actions>
     </x-admin.page-header>
 
     <div class="row g-3">
         <div class="col-12 col-lg-8">
-            <div class="card shadow-sm border-0 mb-3">
+            <div class="card mb-3">
                 <div class="card-body">
-                    <h2 class="h6 text-muted text-uppercase mb-3">{{ __('Items') }}</h2>
+                    <h2 class="section-label mb-3">{{ __('Items') }}</h2>
                     <div class="table-responsive">
                         <table class="table align-middle mb-0">
                             <thead class="table-light">
@@ -67,15 +69,17 @@
         </div>
 
         <div class="col-12 col-lg-4">
-            <div class="card shadow-sm border-0 mb-3">
+            <div class="card mb-3">
                 <div class="card-body">
-                    <h2 class="h6 text-muted text-uppercase mb-3">{{ __('Status') }}</h2>
+                    <h2 class="section-label mb-3">{{ __('Status') }}</h2>
                     <p class="mb-3"><x-order-status-badge :status="$order->status" /></p>
 
+                    <x-order-timeline :status="$order->status" />
+
                     @if (empty($allowedStatuses))
-                        <p class="text-muted small mb-0">{{ __('This order is closed and cannot change status.') }}</p>
+                        <p class="text-muted small mb-0 mt-3">{{ __('This order is closed and cannot change status.') }}</p>
                     @else
-                        <form method="POST" action="{{ route('admin.orders.status.update', $order) }}">
+                        <form method="POST" action="{{ route('admin.orders.status.update', $order) }}" class="mt-3">
                             @csrf
                             @method('PATCH')
                             <label for="status" class="form-label">{{ __('Move to') }}</label>
@@ -84,29 +88,31 @@
                                     <option value="{{ $status->value }}">{{ $status->label() }}</option>
                                 @endforeach
                             </select>
-                            <button type="submit" class="btn btn-primary w-100">{{ __('Update status') }}</button>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <x-icon name="check" /> {{ __('Update status') }}
+                            </button>
                         </form>
                     @endif
                 </div>
             </div>
 
-            <div class="card shadow-sm border-0 mb-3">
+            <div class="card mb-3">
                 <div class="card-body">
-                    <h2 class="h6 text-muted text-uppercase mb-3">{{ __('Customer') }}</h2>
+                    <h2 class="section-label mb-3">{{ __('Customer') }}</h2>
                     <dl class="row mb-0 small">
-                        <dt class="col-5">{{ __('Company') }}</dt>
+                        <dt class="col-5 text-muted fw-normal">{{ __('Company') }}</dt>
                         <dd class="col-7">{{ $order->customer?->company_name ?? '—' }}</dd>
-                        <dt class="col-5">{{ __('Contact') }}</dt>
+                        <dt class="col-5 text-muted fw-normal">{{ __('Contact') }}</dt>
                         <dd class="col-7">{{ $order->customer?->user?->name ?? '—' }}</dd>
-                        <dt class="col-5">{{ __('Email') }}</dt>
+                        <dt class="col-5 text-muted fw-normal">{{ __('Email') }}</dt>
                         <dd class="col-7">{{ $order->customer?->user?->email ?? '—' }}</dd>
                     </dl>
                 </div>
             </div>
 
-            <div class="card shadow-sm border-0">
+            <div class="card">
                 <div class="card-body">
-                    <h2 class="h6 text-muted text-uppercase mb-3">{{ __('Shipping address') }}</h2>
+                    <h2 class="section-label mb-3">{{ __('Shipping address') }}</h2>
                     @if ($order->address)
                         <address class="small mb-0">
                             <strong>{{ $order->address->recipient_name }}</strong><br>

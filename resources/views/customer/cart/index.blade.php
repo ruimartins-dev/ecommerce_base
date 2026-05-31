@@ -14,19 +14,23 @@
             <form method="POST" action="{{ route('customer.cart.clear') }}">
                 @csrf
                 @method('DELETE')
-                <button type="submit" class="btn btn-outline-danger btn-sm">{{ __('Clear cart') }}</button>
+                <button type="submit" class="btn btn-outline-danger btn-sm">
+                    <x-icon name="trash" /> {{ __('Clear cart') }}
+                </button>
             </form>
         @endif
     </div>
 
     @if ($items->isEmpty())
-        <x-empty-state :message="__('O carrinho está vazio')">
+        <x-empty-state :title="__('Your cart is empty')"
+                       :message="__('O carrinho está vazio')"
+                       icon="cart">
             <a href="{{ route('customer.products.index') }}" class="btn btn-primary">
-                {{ __('Browse products') }}
+                <x-icon name="product" /> {{ __('Browse products') }}
             </a>
         </x-empty-state>
     @else
-        <div class="card border-0 shadow-sm">
+        <div class="card">
             <div class="table-responsive">
                 <table class="table align-middle mb-0">
                     <thead class="table-light">
@@ -93,10 +97,10 @@
 
         <div class="mt-3 d-flex flex-wrap gap-2">
             <a href="{{ route('customer.products.index') }}" class="btn btn-outline-secondary">
-                {{ __('Continue shopping') }}
+                <x-icon name="arrow-left" /> {{ __('Continue shopping') }}
             </a>
             <a href="{{ route('customer.checkout.index') }}" class="btn btn-primary ms-md-auto">
-                {{ __('Proceed to checkout') }}
+                {{ __('Proceed to checkout') }} <x-icon name="check" />
             </a>
         </div>
     @endif

@@ -3,63 +3,84 @@
 @section('title', __('Admin Dashboard'))
 
 @section('content')
-    @php($user = auth()->user())
+    @php
+        $user = auth()->user();
 
-    <x-breadcrumbs :items="[
-        ['label' => __('Admin'), 'url' => route('admin.dashboard')],
-        ['label' => __('Dashboard')],
-    ]" />
+        $modules = [
+            ['label' => __('Catalogs'), 'icon' => 'catalog', 'tone' => 'primary', 'href' => route('admin.catalogs.index')],
+            ['label' => __('Categories'), 'icon' => 'category', 'tone' => 'info', 'href' => route('admin.categories.index')],
+            ['label' => __('Products'), 'icon' => 'product', 'tone' => 'success', 'href' => route('admin.products.index')],
+            ['label' => __('Orders'), 'icon' => 'order', 'tone' => 'warning', 'href' => route('admin.orders.index')],
+            ['label' => __('Customers'), 'icon' => 'customer', 'tone' => 'secondary', 'href' => route('admin.customers.index')],
+            ['label' => __('Addresses'), 'icon' => 'address', 'tone' => 'danger', 'href' => route('admin.addresses.index')],
+        ];
+    @endphp
 
-    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h3 mb-1">{{ __('Backoffice') }}</h1>
-            <p class="text-muted mb-0">{{ __('Welcome back, :name.', ['name' => $user->name]) }}</p>
-        </div>
-        <span class="badge text-bg-primary">{{ $user->role?->name }}</span>
+    <x-admin.page-header
+        :title="__('Backoffice')"
+        :subtitle="__('Welcome back, :name.', ['name' => $user->name])"
+        :breadcrumbs="[
+            ['label' => __('Admin'), 'url' => route('admin.dashboard')],
+            ['label' => __('Dashboard')],
+        ]">
+        <x-slot:actions>
+            <a href="{{ route('admin.products.create') }}" class="btn btn-primary">
+                <x-icon name="plus" /> {{ __('New product') }}
+            </a>
+        </x-slot:actions>
+    </x-admin.page-header>
+
+    {{-- Quick actions: fast navigation into each management module. --}}
+    <h2 class="section-label mb-3">{{ __('Management modules') }}</h2>
+    <div class="row g-3 mb-4">
+        @foreach ($modules as $module)
+            <div class="col-6 col-md-4 col-xl-2">
+                <a href="{{ $module['href'] }}" class="card card-hover h-100 text-body text-decoration-none">
+                    <div class="card-body text-center py-4">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-3 mb-2 badge-soft-{{ $module['tone'] }}"
+                              style="width:48px;height:48px;">
+                            <x-icon :name="$module['icon']" size="lg" />
+                        </span>
+                        <div class="fw-semibold small">{{ $module['label'] }}</div>
+                    </div>
+                </a>
+            </div>
+        @endforeach
     </div>
 
     <div class="row g-3">
         <div class="col-12 col-lg-6">
-            <div class="card h-100 shadow-sm border-0">
+            <div class="card h-100">
                 <div class="card-body">
-                    <h2 class="h6 text-muted text-uppercase mb-3">{{ __('Your account') }}</h2>
+                    <h2 class="section-label mb-3">{{ __('Your account') }}</h2>
                     <dl class="row mb-0 small">
-                        <dt class="col-4">{{ __('Name') }}</dt>
-                        <dd class="col-8">{{ $user->name }}</dd>
+                        <dt class="col-4 text-muted fw-normal">{{ __('Name') }}</dt>
+                        <dd class="col-8 fw-medium">{{ $user->name }}</dd>
 
-                        <dt class="col-4">{{ __('Email') }}</dt>
+                        <dt class="col-4 text-muted fw-normal">{{ __('Email') }}</dt>
                         <dd class="col-8">{{ $user->email }}</dd>
 
-                        <dt class="col-4">{{ __('Role') }}</dt>
-                        <dd class="col-8">{{ $user->role?->name }}</dd>
+                        <dt class="col-4 text-muted fw-normal">{{ __('Role') }}</dt>
+                        <dd class="col-8"><span class="badge badge-soft-primary">{{ $user->role?->name }}</span></dd>
                     </dl>
                 </div>
             </div>
         </div>
 
         <div class="col-12 col-lg-6">
-            <div class="card h-100 shadow-sm border-0">
+            <div class="card h-100">
                 <div class="card-body d-flex flex-column">
-                    <h2 class="h6 text-muted text-uppercase mb-3">{{ __('Management modules') }}</h2>
-                    <div class="row g-2">
-                        <div class="col-6">
-                            <a href="{{ route('admin.catalogs.index') }}" class="btn btn-outline-primary w-100">{{ __('Catalogs') }}</a>
-                        </div>
-                        <div class="col-6">
-                            <a href="{{ route('admin.categories.index') }}" class="btn btn-outline-primary w-100">{{ __('Categories') }}</a>
-                        </div>
-                        <div class="col-6">
-                            <a href="{{ route('admin.products.index') }}" class="btn btn-outline-primary w-100">{{ __('Products') }}</a>
-                        </div>
-                        <div class="col-6">
-                            <a href="{{ route('admin.customers.index') }}" class="btn btn-outline-primary w-100">{{ __('Customers') }}</a>
-                        </div>
-                        <div class="col-6">
-                            <a href="{{ route('admin.addresses.index') }}" class="btn btn-outline-primary w-100">{{ __('Addresses') }}</a>
-                        </div>
-                        <div class="col-6">
-                            <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-primary w-100">{{ __('Orders') }}</a>
-                        </div>
+                    <h2 class="section-label mb-3">{{ __('Shortcuts') }}</h2>
+                    <div class="d-grid gap-2">
+                        <a href="{{ route('admin.orders.index') }}" class="btn btn-outline-primary justify-content-start">
+                            <x-icon name="order" /> {{ __('Review recent orders') }}
+                        </a>
+                        <a href="{{ route('admin.products.create') }}" class="btn btn-outline-primary justify-content-start">
+                            <x-icon name="plus" /> {{ __('Add a new product') }}
+                        </a>
+                        <a href="{{ route('admin.audit-logs.index') }}" class="btn btn-outline-primary justify-content-start">
+                            <x-icon name="audit" /> {{ __('Inspect audit logs') }}
+                        </a>
                     </div>
                 </div>
             </div>
